@@ -1,0 +1,1 @@
+Sterownik Mijanek - tester
