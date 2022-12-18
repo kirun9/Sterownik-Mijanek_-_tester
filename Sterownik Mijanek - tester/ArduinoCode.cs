@@ -342,6 +342,32 @@ internal class ArduinoCode
         }
         DataShiftedOut?.Invoke(null, tVal);
     }
+
+    protected byte[] shiftIn(int dataPin, int clockPin, int loadPin, int bitOrder, int expectedBytes)
+    {
+        byte[] bytes = new byte[expectedBytes];
+        int value = 0;
+        digitalWrite(loadPin, LOW);
+        digitalWrite(loadPin, HIGH);
+        for (int i = 0; i < expectedBytes * 8; i++)
+        {
+            digitalWrite(clockPin, HIGH);
+            if (bitOrder == LSBFIRST)
+            {
+                value = ((value >> 1) | (digitalRead(dataPin) << 7));
+            }
+            else
+            {
+                value = ((value << 1) | digitalRead(dataPin));
+            }
+            digitalWrite(clockPin, LOW);
+            if (i % 8 == 7)
+            {
+                bytes[i / 8] = (byte) value;
+            }
+        }
+        return bytes;
+    }
 }
 
 public static class IntExtensions
